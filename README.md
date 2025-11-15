@@ -21,26 +21,20 @@ This project is a secure, console-based password manager developed in C. It allo
 ## 📁 Directory Structure
 
 **PasswordManager/**
-- `main.c`  
-  Entry point and menu logic  
-- `passwords.c`  
-  Credential operations (add, view, search, delete)  
-- `passwords.h`  
-- `encryption.c`  
-  XOR encryption/decryption functions  
-- `encryption.h`  
-- `storage.c`  
-  File I/O for saving/loading credentials  
-- `storage.h`  
-- `auth.c`  
-  Master password verification (optional)  
-- `auth.h`  
-- `vault.dat`  
-  Encrypted credential storage file  
-- `README.md`  
-  Project documentation  
-- `ProjectReport.pdf`  
-  Academic report  
+- `docs/`
+  - `ProjectReport.pdf`
+- `include/`
+  - `passwords.h`
+  - `encryption.h`
+  - `auth.h`
+  - `vault.dat`
+- `src/`
+  - `main.c`
+  - `passwords.c`
+  - `encryption.c`
+  - `storage.c`
+  - `auth.c`
+- `README.md`
 
 ## 🧾 How to Use
 - Launch the program and enter the master password (if enabled)
