@@ -42,12 +42,13 @@ void view_credentials() {
     if (!fp) {
         printf("No credentials found.\n");
         return;
-    }
+}
 
     printf("\n--- Saved Credentials ---\n");
     while (fread(&c, sizeof(Credential), 1, fp)) {
         xor_encrypt(c.password, KEY);
-        printf("Website: %s\nEmail: %s\nPassword: %s\n\n", c.website, c.email, c.password);
+        printf("Website: %s\nEmail: %s\nPassword: %s\n\n",
+               c.website, c.email, c.password);
         xor_encrypt(c.password, KEY); // re-encrypt
     }
 
@@ -72,59 +73,13 @@ void search_credential() {
     while (fread(&c, sizeof(Credential), 1, fp)) {
         if (strcmp(c.website, target) == 0) {
             xor_encrypt(c.password, KEY);
-            printf("\nWebsite: %s\nEmail: %s\nPassword: %s\n", c.website, c.email, c.password);
+            printf("\nWebsite: %s\nEmail: %s\nPassword: %s\n",
+                   c.website, c.email, c.password);
             xor_encrypt(c.password, KEY);
             found = 1;
             break;
         }
-    }
-
-    fclose(fp);
-    if (!found) printf("No record found for '%s'.\n", target);
 }
-
-void delete_credential() {
-    char target[50];
-    Credential c;
-    int found = 0;
-
-    FILE *fp = fopen(FILE_NAME, "rb");
-    FILE *temp = fopen("temp.dat", "wb");
-
-ed Credentials ---\n");
-    while (fread(&c, sizeof(Credential), 1, fp)) {
-        xor_encrypt(c.password, KEY);
-        printf("Website: %s\nEmail: %s\nPassword: %s\n\n", c.website, c.email, c.password);
-        xor_encrypt(c.password, KEY); // re-encrypt
-    }
-
-    fclose(fp);
-}
-
-void search_credential() {
-    char target[50];
-    Credential c;
-    int found = 0;
-    FILE *fp = fopen(FILE_NAME, "rb");
-
-    if (!fp) {
-        printf("No credentials found.\n");
-        return;
-    }
-
-    printf("Enter website to search: ");
-    fgets(target, sizeof(target), stdin);
-    strtok(target, "\n");
-
-    while (fread(&c, sizeof(Credential), 1, fp)) {
-        if (strcmp(c.website, target) == 0) {
-            xor_encrypt(c.password, KEY);
-            printf("\nWebsite: %s\nEmail: %s\nPassword: %s\n", c.website, c.email, c.password);
-            xor_encrypt(c.password, KEY);
-            found = 1;
-            break;
-        }
-    }
 
     fclose(fp);
     if (!found) printf("No record found for '%s'.\n", target);
@@ -140,6 +95,8 @@ void delete_credential() {
 
     if (!fp || !temp) {
         printf("Error opening files.\n");
+        if (fp) fclose(fp);
+        if (temp) fclose(temp);
         return;
     }
 
@@ -150,7 +107,7 @@ void delete_credential() {
     while (fread(&c, sizeof(Credential), 1, fp)) {
         if (strcmp(c.website, target) == 0) {
             found = 1;
-            continue;
+            continue; // skip writing this record
         }
         fwrite(&c, sizeof(Credential), 1, temp);
     }
@@ -166,3 +123,4 @@ void delete_credential() {
     else
         printf("No record found for '%s'.\n", target);
 }
+
