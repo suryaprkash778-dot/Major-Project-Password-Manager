@@ -7,6 +7,7 @@
 #define FILE_NAME "vault.dat"
 #define KEY 'K'
 
+// Add a new credential
 void add_credential() {
     Credential c;
     FILE *fp = fopen(FILE_NAME, "ab");
@@ -35,6 +36,7 @@ void add_credential() {
     printf("✅ Credential saved.\n");
 }
 
+// View all credentials
 void view_credentials() {
     Credential c;
     FILE *fp = fopen(FILE_NAME, "rb");
@@ -42,19 +44,19 @@ void view_credentials() {
     if (!fp) {
         printf("No credentials found.\n");
         return;
-}
-
-    printf("\n--- Saved Credentials ---\n");
+    }
+printf("\n--- Saved Credentials ---\n");
     while (fread(&c, sizeof(Credential), 1, fp)) {
         xor_encrypt(c.password, KEY);
         printf("Website: %s\nEmail: %s\nPassword: %s\n\n",
                c.website, c.email, c.password);
-        xor_encrypt(c.password, KEY); // re-encrypt
+        xor_encrypt(c.password, KEY); // re-encrypt before moving on
     }
 
     fclose(fp);
 }
 
+// Search for a credential by website
 void search_credential() {
     char target[50];
     Credential c;
@@ -79,15 +81,16 @@ void search_credential() {
             found = 1;
             break;
         }
-}
+    }
 
     fclose(fp);
     if (!found) printf("No record found for '%s'.\n", target);
 }
 
+// Delete a credential by website
 void delete_credential() {
     char target[50];
-    Credential c;
+ Credential c;
     int found = 0;
 
     FILE *fp = fopen(FILE_NAME, "rb");
@@ -124,3 +127,5 @@ void delete_credential() {
         printf("No record found for '%s'.\n", target);
 }
 
+
+  
