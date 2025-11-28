@@ -1,21 +1,29 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "passwords.h"
 #include "encryption.h"
 
-#define FILE_NAME "vault.dat"
+#define MAX_CREDENTIALS 100
 #define KEY 'K'
+
+// Struct for credentials
+typedef struct {
+    char website[50];
+    char email[50];
+    char password[50];
+} Credential;
+
+Credential credentials[MAX_CREDENTIALS];
+int count = 0;
 
 // Add a new credential
 void add_credential() {
-    Credential c;
-    FILE *fp = fopen(FILE_NAME, "ab");
-
-    if (!fp) {
-        printf("Error opening file.\n");
+    if (count >= MAX_CREDENTIALS) {
+        printf("Storage full!\n");
         return;
     }
+
+    Credential c;
 
     printf("Website: ");
     fgets(c.website, sizeof(c.website), stdin);
@@ -30,96 +38,69 @@ void add_credential() {
     strtok(c.password, "\n");
 
     xor_encrypt(c.password, KEY);
-    fwrite(&c, sizeof(Credential), 1, fp);
-    fclose(fp);
+    credentials[count++] = c;
 
-    printf("✅ Credential saved.\n");
+    printf("✅ Credential saved (in memory).\n");
 }
 
 // View all credentials
 void view_credentials() {
-    Credential c;
-    FILE *fp = fopen(FILE_NAME, "rb");
-
-    if (!fp) {
-        printf("No credentials found.\n");
+ if (count == 0) {
+        printf("No credentials stored.\n");
         return;
     }
-printf("\n--- Saved Credentials ---\n");
-    while (fread(&c, sizeof(Credential), 1, fp)) {
-        xor_encrypt(c.password, KEY);
-        printf("Website: %s\nEmail: %s\nPassword: %s\n\n",
-               c.website, c.email, c.password);
-        xor_encrypt(c.password, KEY); // re-encrypt before moving on
-    }
 
-    fclose(fp);
+    printf("\n--- Saved Credentials ---\n");
+    for (int i = 0; i < count; i++) {
+        xor_encrypt(credentials[i].password, KEY);
+        printf("Website: %s\nEmail: %s\nPassword: %s\n\n",
+               credentials[i].website, credentials[i].email, credentials[i].password);
+        xor_encrypt(credentials[i].password, KEY); // re-encrypt
+    }
 }
 
 // Search for a credential by website
 void search_credential() {
     char target[50];
-    Credential c;
     int found = 0;
-    FILE *fp = fopen(FILE_NAME, "rb");
-
-    if (!fp) {
-        printf("No credentials found.\n");
-        return;
-    }
 
     printf("Enter website to search: ");
     fgets(target, sizeof(target), stdin);
     strtok(target, "\n");
 
-    while (fread(&c, sizeof(Credential), 1, fp)) {
-        if (strcmp(c.website, target) == 0) {
-            xor_encrypt(c.password, KEY);
+    for (int i = 0; i < count; i++) {
+        if (strcmp(credentials[i].website, target) == 0) {
+            xor_encrypt(credentials[i].password, KEY);
             printf("\nWebsite: %s\nEmail: %s\nPassword: %s\n",
-                   c.website, c.email, c.password);
-            xor_encrypt(c.password, KEY);
+                   credentials[i].website, credentials[i].email, credentials[i].password);
+            xor_encrypt(credentials[i].password, KEY);
             found = 1;
             break;
         }
     }
 
-    fclose(fp);
     if (!found) printf("No record found for '%s'.\n", target);
 }
 
 // Delete a credential by website
 void delete_credential() {
     char target[50];
- Credential c;
     int found = 0;
-
-    FILE *fp = fopen(FILE_NAME, "rb");
-    FILE *temp = fopen("temp.dat", "wb");
-
-    if (!fp || !temp) {
-        printf("Error opening files.\n");
-        if (fp) fclose(fp);
-        if (temp) fclose(temp);
-        return;
-    }
 
     printf("Enter website to delete: ");
     fgets(target, sizeof(target), stdin);
     strtok(target, "\n");
 
-    while (fread(&c, sizeof(Credential), 1, fp)) {
-        if (strcmp(c.website, target) == 0) {
+    for (int i = 0; i < count; i++) {
+        if (strcmp(credentials[i].website, target) == 0) {
+            for (int j = i; j < count - 1; j++) {
+                credentials[j] = credentials[j + 1];
+            }
+            count--;
             found = 1;
-            continue; // skip writing this record
+            break;
         }
-        fwrite(&c, sizeof(Credential), 1, temp);
     }
-
-    fclose(fp);
-    fclose(temp);
-
-    remove(FILE_NAME);
-    rename("temp.dat", FILE_NAME);
 
     if (found)
         printf("✅ Credential deleted.\n");
