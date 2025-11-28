@@ -25,11 +25,9 @@ This project is a secure, console-based password manager developed in C. It allo
   - `ProjectReport.pdf`
 - `include/`  
   - `passwords.h`  
-  - `encryption.h`
 - `src/`  
   - `main.c`  
   - `passwords.c`  
-  - `encryption.c`
 - `README.md`
 
 ## 🧾 How to Use
