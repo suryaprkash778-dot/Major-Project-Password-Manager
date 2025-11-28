@@ -1,8 +1,7 @@
 // Main menu
 int main() {
     int choice;
-
-    load_from_file(); // load existing credentials at startup
+load_from_file(); // load existing credentials at startup
 
     do {
         printf("\n=== Password Manager (Plain Text Storage) ===\n");
