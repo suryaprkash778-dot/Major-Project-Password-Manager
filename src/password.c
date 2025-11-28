@@ -1,16 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "passwords.h"   // include your header
 
 #define MAX_CREDENTIALS 100
 #define FILE_NAME "credentials.txt"
-
-// Struct for credentials
-typedef struct {
-    char website[50];
-    char email[50];
-    char password[50];
-} Credential;
 
 Credential credentials[MAX_CREDENTIALS];
 int count = 0;
@@ -45,7 +39,7 @@ void load_from_file() {
         credentials[count++] = c;
     }
     fclose(fp);
-if (count > 0)
+    if (count > 0)
         printf("✅ Loaded %d credentials from text file.\n", count);
 }
 
