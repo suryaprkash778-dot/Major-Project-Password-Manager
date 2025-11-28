@@ -1,11 +1,9 @@
-#include <stdio.h>
-#include "passwords.h"
-
+// Main menu
 int main() {
     int choice;
 
     do {
-        printf("\n=== Password Manager ===\n");
+        printf("\n=== Password Manager (Memory Only) ===\n");
         printf("1. Add Credential\n");
         printf("2. View All Credentials\n");
         printf("3. Search by Website\n");
@@ -27,4 +25,5 @@ int main() {
 
     return 0;
 }
+
 
