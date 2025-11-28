@@ -2,8 +2,10 @@
 int main() {
     int choice;
 
+    load_from_file(); // load existing credentials at startup
+
     do {
-        printf("\n=== Password Manager (Memory Only) ===\n");
+        printf("\n=== Password Manager (Text File Storage) ===\n");
         printf("1. Add Credential\n");
         printf("2. View All Credentials\n");
         printf("3. Search by Website\n");
@@ -22,8 +24,6 @@ int main() {
             default: printf("Invalid choice. Try again.\n");
         }
     } while (choice != 5);
-
     return 0;
 }
-
 
