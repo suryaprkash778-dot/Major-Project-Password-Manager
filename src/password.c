@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "encryption.h"
+#include "encryption.h"   // your xor_encrypt() function
 
 #define MAX_CREDENTIALS 100
 #define KEY 'K'
+#define FILE_NAME "credentials.txt"
 
 // Struct for credentials
 typedef struct {
@@ -15,6 +16,42 @@ typedef struct {
 
 Credential credentials[MAX_CREDENTIALS];
 int count = 0;
+
+// Save credentials to text file
+void save_to_file() {
+    FILE *fp = fopen(FILE_NAME, "w");
+    if (!fp) {
+        printf("Error saving file!\n");
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        // store encrypted password in file
+        fprintf(fp, "%s|%s|%s\n",
+                credentials[i].website,
+                credentials[i].email,
+                credentials[i].password);
+    }
+    fclose(fp);
+    printf("✅ Credentials saved to text file.\n");
+}
+
+// Load credentials from text file
+void load_from_file() {
+    FILE *fp = fopen(FILE_NAME, "r");
+    if (!fp) return; // no file yet
+
+    char line[200];
+    while (fgets(line, sizeof(line), fp)) {
+        Credential c;
+        // parse line: website|email|password
+        sscanf(line, "%49[^|]|%49[^|]|%49[^\n]",
+               c.website, c.email, c.password);
+        credentials[count++] = c;
+    }
+    fclose(fp);
+    if (count > 0)
+        printf("✅ Loaded %d credentials from text file.\n", count);
+}
 
 // Add a new credential
 void add_credential() {
@@ -27,32 +64,33 @@ void add_credential() {
 
     printf("Website: ");
     fgets(c.website, sizeof(c.website), stdin);
-    strtok(c.website, "\n");
+    c.website[strcspn(c.website, "\n")] = '\0';
 
     printf("Email: ");
     fgets(c.email, sizeof(c.email), stdin);
-    strtok(c.email, "\n");
+    c.email[strcspn(c.email, "\n")] = '\0';
 
     printf("Password: ");
     fgets(c.password, sizeof(c.password), stdin);
-    strtok(c.password, "\n");
+    c.password[strcspn(c.password, "\n")] = '\0';
 
-    xor_encrypt(c.password, KEY);
+    xor_encrypt(c.password, KEY); // encrypt before storing
     credentials[count++] = c;
 
     printf("✅ Credential saved (in memory).\n");
+    save_to_file(); // persist immediately
 }
 
 // View all credentials
 void view_credentials() {
- if (count == 0) {
+    if (count == 0) {
         printf("No credentials stored.\n");
         return;
     }
 
     printf("\n--- Saved Credentials ---\n");
     for (int i = 0; i < count; i++) {
-        xor_encrypt(credentials[i].password, KEY);
+        xor_encrypt(credentials[i].password, KEY); // decrypt temporarily
         printf("Website: %s\nEmail: %s\nPassword: %s\n\n",
                credentials[i].website, credentials[i].email, credentials[i].password);
         xor_encrypt(credentials[i].password, KEY); // re-encrypt
@@ -66,7 +104,7 @@ void search_credential() {
 
     printf("Enter website to search: ");
     fgets(target, sizeof(target), stdin);
-    strtok(target, "\n");
+    target[strcspn(target, "\n")] = '\0';
 
     for (int i = 0; i < count; i++) {
         if (strcmp(credentials[i].website, target) == 0) {
@@ -89,9 +127,8 @@ void delete_credential() {
 
     printf("Enter website to delete: ");
     fgets(target, sizeof(target), stdin);
-    strtok(target, "\n");
-
-    for (int i = 0; i < count; i++) {
+    target[strcspn(target, "\n")] = '\0';
+ for (int i = 0; i < count; i++) {
         if (strcmp(credentials[i].website, target) == 0) {
             for (int j = i; j < count - 1; j++) {
                 credentials[j] = credentials[j + 1];
@@ -102,11 +139,10 @@ void delete_credential() {
         }
     }
 
-    if (found)
+    if (found) {
         printf("✅ Credential deleted.\n");
-    else
+        save_to_file(); // update file after deletion
+    } else {
         printf("No record found for '%s'.\n", target);
+    }
 }
-
-
-  
