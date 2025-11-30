@@ -39,20 +39,16 @@ This project is a console-based password manager developed in C. It allows users
 - Credentials are stored in `credentials.txt` in plain text format
 
 ## 🔒 Security Notes
-- Passwords are stored in plain text for simplicity in this version  
-- For real-world applications, stronger encryption algorithms (e.g., AES) and secure storage practices are recommended  
+- Passwords are stored in plain text for simplicity    
 
 ## 👤 Author
-- **Surya**: Sole developer and contributor  
-  - Designed and implemented all modules  
-  - File handling, input validation, and project structure  
-  - Documentation and project organization  
+- **Surya Prakash Sharma**: Sole developer and contributor  
+ 
 
 ## 📄 Report
 Refer to `docs/ProjectReport.pdf` for a detailed academic write-up including:  
 - System architecture  
-- Implementation details  
-- Challenges faced  
+- Implementation details    
 - Testing and results  
 - Future improvements
 
