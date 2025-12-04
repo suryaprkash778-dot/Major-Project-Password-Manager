@@ -42,7 +42,7 @@ This project is a console-based password manager developed in C. It allows users
 - Passwords are stored in plain text for simplicity    
 
 ## 👤 Author
-- **Surya Prakash Sharma**: Sole developer and contributor  
+- **Surya Prakash Sharma**: Sole developer  
  
 
 ## 📄 Report
